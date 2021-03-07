@@ -4,7 +4,7 @@ import {
   WebGLRenderer
 } from 'three'
 
-export const init = (width, height) => {
+export default (width, height) => {
 
   const scene = new Scene()
   const camera = new PerspectiveCamera(60, width/height, 0.1, 1000)
@@ -14,19 +14,26 @@ export const init = (width, height) => {
   renderer.setClearColor("#e5e5e5")
   document.body.appendChild(renderer.domElement)
 
-  return { scene, camera, renderer }
+  const animate = () => {
+    requestAnimationFrame(animate)
+    renderer.render(scene, camera)
+  }
 
-}
+  const updateWindow = () => {
 
-export const updateWindow = ({ camera, renderer }) => {
+    const newWidth = window.innerWidth
+    const newHeight = window.innerHeight -118
+  
+    renderer.setSize(newWidth, newHeight)
+    camera.aspect = newWidth / newHeight
+  
+    camera.updateProjectionMatrix()
+  
+  }
 
-  const width = window.innerWidth
-  const height = window.innerHeight -118
-  console.log('ran');
+  animate()
+  window.addEventListener('resize', updateWindow)
 
-  renderer.setSize(width, height)
-  camera.aspect = width / height
-
-  camera.updateProjectionMatrix()
+  return { scene, camera }
 
 }
