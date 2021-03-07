@@ -1,18 +1,27 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="container">
+    <h1>Three Js animations</h1>
+    <ProjectList  :projects="projects" />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import ProjectList from "@/components/Home/ProjectList.vue"
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld
+    ProjectList
+  },
+  setup() {
+    const projects = [
+      {
+        title: "Cube animation",
+        link: "/cube-animation"
+      }
+    ]
+
+    return { projects }
   }
 }
 </script>
