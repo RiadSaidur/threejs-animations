@@ -1,127 +1,136 @@
 <template>
-  <h1>Nice</h1>
+  <div id="cube-container">
+    <h1>Box Geometry - animate on hover</h1>
+  </div>
 </template>
 
 <script>
 import { gsap } from 'gsap'
-import init from "@/threejs/threejs"
+import initializeThree from "@/threejs/threejs"
 import {
   BoxGeometry,
   MeshLambertMaterial,
   Mesh,
-  // SpotLight,
   PointLight,
   AmbientLight,
   Raycaster,
   Vector2
 } from 'three'
+import { onMounted, onUnmounted } from 'vue'
 
 export default {
   name: "Cube",
   setup() {
-    let width = window.innerWidth
-    let height = window.innerHeight - 118
+
+    const init = () => {
+      let width = window.innerWidth
+      let height = window.innerHeight - 118
 
 
-    const newBoxGeometry = ({ x, y, z}) => {
+      const newBoxGeometry = ({ x, y, z}) => {
 
-      const geometry = new BoxGeometry(x, y, z)
-      const material = new MeshLambertMaterial({ color: 0x006994 })
-      const cube = new Mesh(geometry, material)
-      scene.add(cube)
+        const geometry = new BoxGeometry(x, y, z)
+        const material = new MeshLambertMaterial({ color: 0x006994 })
+        const cube = new Mesh(geometry, material)
+        scene.add(cube)
 
-      return cube
-
-    }
-
-    // SpotLight( color : Integer, intensity : Float, distance : Float, angle : Radians, penumbra : Float, decay : Float )
-    // const addSpotlight = () => {
-      
-    //   const spotLight = new SpotLight( 0xffffff );
-    //   spotLight.position.set( 50, 100, 100 );
-
-    //   spotLight.castShadow = true;
-
-    //   spotLight.shadow.mapSize.width = 1024;
-    //   spotLight.shadow.mapSize.height = 1024;
-
-    //   spotLight.shadow.camera.near = 500;
-    //   spotLight.shadow.camera.far = 4000;
-    //   spotLight.shadow.camera.fov = 30;
-
-    //   scene.add( spotLight );
-
-    // }
-
-    // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
-    const addPointLight = () => {
-
-      const light = new PointLight(0xFFFFFF, 2, 1000)
-      light.position.set(10,50,25);
-      scene.add(light);
-
-    }
-
-    // AmbientLight( color : Integer, intensity : Float )
-    const ambientLight = () => {
-
-      const light = new AmbientLight( 0x404040, 1.5 );
-      scene.add( light );
-
-    }
-
-    const addIntersect = event => {
-
-      const raycaster = new Raycaster();
-      const mouse = new Vector2();
-
-      event.preventDefault()
-
-      mouse.x = (event.clientX / width) * 2 - 1
-      mouse.y = - (event.clientY / height) * 2 + 1
-
-      raycaster.setFromCamera(mouse, camera);
-
-      const intersects = raycaster.intersectObjects(scene.children, true)
-      console.log(intersects[0].object)
-
-      for(let i = 0; i < intersects.length; i++) {
-
-        const tl = gsap.timeline()
-        tl.to(intersects[i].object.scale, 1, {x: 2, ease: "elastic"})
-        tl.to(intersects[i].object.scale, .5, {x: .5, ease: "back"})
-        tl.to(intersects[i].object.position, .5, {x: 2, ease: "elastic"})
-        tl.to(intersects[i].object.rotation, .5, {y: Math.PI*.5, ease: "bounce"}, "=-2")
-        tl.to(intersects[i].object.position, 1, {z: -Math.PI*.10, ease: "elastic"}, "=-1.5")
-        tl.to(intersects[i].object.rotation, .5, {x: 0, ease: "bounce"}, "=-1.5")
-        tl.to(intersects[i].object.rotation, .5, {z: 0, ease: "bounce"}, "=-3")
+        return cube
 
       }
 
+      // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
+      const addPointLight = () => {
+
+        const light = new PointLight(0xFFFFFF, 2, 1000)
+        light.position.set(10,50,25);
+        scene.add(light);
+
+      }
+
+      // AmbientLight( color : Integer, intensity : Float )
+      const ambientLight = () => {
+
+        const light = new AmbientLight( 0x404040, 1.5 );
+        scene.add( light );
+
+      }
+
+      const startAnimating = elements => {
+
+        for(let i = 0; i < elements.length; i++) {
+
+          const tl = gsap.timeline()
+          tl.to(elements[i].object.scale, 1, {x: 2, ease: "elastic"})
+          tl.to(elements[i].object.scale, .5, {z: .5, ease: "back"})
+          tl.to(elements[i].object.position, .5, {x: Math.round(Math.random()*10 - 5) * 2 - 1, ease: "power2"})
+          tl.to(elements[i].object.rotation, .5, {y: Math.PI*.5, ease: "bounce"}, "=-2")
+          tl.to(elements[i].object.position, 1, {z: Math.random()*.5, ease: "back"}, "=3")
+          tl.to(elements[i].object.rotation, .5, {x: 0, ease: "back"}, "=-1.5")
+          tl.to(elements[i].object.rotation, .5, {z: 0, ease: "power1"}, "=-3")
+
+        }
+
+      }
+
+      // check if mouse is hoverd on element
+      const addIntersect = event => {
+
+        event.preventDefault()
+
+        const mouse = new Vector2();
+        mouse.x = (event.clientX / width) * 2 - 1
+        mouse.y = - (event.clientY / (window.innerHeight + 118)) * 2 + 1
+
+        const raycaster = new Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObjects(scene.children)
+
+        startAnimating(intersects)
+
+      }
+
+      const createCube = numberOfCubes => {
+
+        for(let i = 0; i < numberOfCubes; i++) {
+          const x = (Math.random() - 0.5) * 10
+          const y = (Math.random() - 0.5) * 10
+          const z = 1
+          const cube = newBoxGeometry(x, y, z)
+
+          cube.position.x = (Math.random() - 0.5) * 10
+          cube.position.y = (Math.random() - 0.5) * 10
+          cube.position.z = (Math.random() - 0.5) * 10
+        }
+
+      }
+
+      const clearListeners = () => {
+        window.removeEventListener('mousemove', addIntersect)
+        clearResizeListener()
+      }
+      
+      // INITIALIZE THREEJS
+      const cameraPosition = 10
+      const { scene, camera, clearResizeListener } = initializeThree(width, height, cameraPosition, "cube-container")
+
+      // ADD LIGHTS
+      addPointLight()
+      ambientLight()
+
+      // CREATE N NUMBER OF CUBES
+      const numberOfCubes = 10
+      createCube(numberOfCubes)
+
+      // WATCH FOR POINTER INTERSECTING ELEMENTS
+      window.addEventListener('mousemove', addIntersect)
+
+      // CLEAR LISTERNERS UNMOUNT
+      onUnmounted(clearListeners)
     }
-    
-    const { scene, camera } = init(width, height)
-    camera.position.z = 10
 
-    for(let i = 0; i < 3; i++) {
-      const x = Math.ceil(Math.random()*10)
-      const y = Math.ceil(Math.random()*10)
-      const z = Math.ceil(Math.random()*10)
-      const cube = newBoxGeometry(x, y, z)
-
-      // cube.rotation.x = (Math.random()/2).toFixed(1)
-      // cube.rotation.z = (Math.random()/2).toFixed(1)
-
-      cube.position.x += Math.random()*10-Math.random()*20
-      cube.position.y += Math.random()*Math.random()
-      cube.position.z -= Math.random()*Math.random()
-    }
-
-    // addSpotlight()
-    addPointLight()
-    ambientLight()
-
-    window.addEventListener('mousemove', addIntersect)
+    // MOUNT THREEJS
+    onMounted(init)
   }
 
 }
