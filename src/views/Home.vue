@@ -18,6 +18,14 @@ export default {
       {
         title: "Cube animation",
         link: "/cube-animation"
+      },
+      {
+        title: "Sphere animation",
+        link: "/sphere-animation"
+      },
+      {
+        title: "Cloud effect",
+        link: "/cloud-effect"
       }
     ]
 

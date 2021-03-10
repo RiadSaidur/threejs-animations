@@ -10,12 +10,22 @@ const routes = [
   {
     path: '/about',
     name: 'About',
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue')
   },
   {
     path: '/cube-animation',
     name: 'Cube',
-    component: () => import(/* webpackChunkName: "cube" */ '../views/Cube.vue')
+    component: () => import(/* webpackChunkName: "cube" */ '@/views/Cube.vue')
+  },
+  {
+    path: '/sphere-animation',
+    name: 'Sphere',
+    component: () => import(/* webpackChunkName: "sphere" */ '@/views/Sphere.vue')
+  },
+  {
+    path: '/cloud-effect',
+    name: 'Cloud',
+    component: () => import(/* webpackChunkName: "cloud" */ '@/views/Cloud.vue')
   }
 ]
 
