@@ -4,16 +4,16 @@ import {
   WebGLRenderer
 } from 'three'
 
-export default (width, height, cameraPosition, container) => {
+export const initializeThree = config => {
 
   const scene = new Scene()
-  const camera = new PerspectiveCamera(60, width/height, 0.1, 1000)
-  camera.position.z = cameraPosition
+  const camera = new PerspectiveCamera(60, config.width/config.height, 0.1, 1000)
+  camera.position.z = config.cameraPosition
 
   const renderer = new WebGLRenderer({ antialias: true })
-  renderer.setSize(width, height)
-  renderer.setClearColor("#e5e5e5")
-  document.querySelector(`#${container}`).appendChild(renderer.domElement)
+  renderer.setSize(config.width, config.height)
+  renderer.setClearColor(config?.backgroundColor)
+  document.querySelector(`#${config.container}`).appendChild(renderer.domElement)
 
   const animate = () => {
     requestAnimationFrame(animate)
@@ -37,6 +37,6 @@ export default (width, height, cameraPosition, container) => {
 
   const clearResizeListener = () => window.removeEventListener('resize', updateWindow)
 
-  return { scene, camera, clearResizeListener }
+  return { scene, camera, renderer, clearResizeListener }
 
 }

@@ -6,7 +6,7 @@
 
 <script>
 import { gsap } from 'gsap'
-import initializeThree from "@/threejs/threejs"
+import { initializeThree } from "@/threejs/threejs"
 import {
   BoxGeometry,
   MeshLambertMaterial,
@@ -23,10 +23,15 @@ export default {
   setup() {
 
     const init = () => {
-      let width = window.innerWidth
-      let height = window.innerHeight - 118
-
-
+      // INITIALIZE THREEJS
+      const config = {
+        width: window.innerWidth,
+        height: window.innerHeight - 118,
+        cameraPosition: 10,
+        backgroundColor: "#e5e5e5",
+        container: "cube-container"
+      }
+      
       const newBoxGeometry = ({ x, y, z}) => {
 
         const geometry = new BoxGeometry(x, y, z)
@@ -78,7 +83,7 @@ export default {
         event.preventDefault()
 
         const mouse = new Vector2();
-        mouse.x = (event.clientX / width) * 2 - 1
+        mouse.x = (event.clientX / config.width) * 2 - 1
         mouse.y = - (event.clientY / (window.innerHeight + 118)) * 2 + 1
 
         const raycaster = new Raycaster();
@@ -110,9 +115,7 @@ export default {
         clearResizeListener()
       }
       
-      // INITIALIZE THREEJS
-      const cameraPosition = 10
-      const { scene, camera, clearResizeListener } = initializeThree(width, height, cameraPosition, "cube-container")
+      const { scene, camera, clearResizeListener } = initializeThree(config)
 
       // ADD LIGHTS
       addPointLight()
